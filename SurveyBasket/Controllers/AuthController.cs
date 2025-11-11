@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.Controllers;
+﻿using SurveyBasket.Abstractions;
+
+namespace SurveyBasket.Controllers;
 
 [Route("[controller]")]
 [ApiController]
@@ -11,7 +13,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         var authResult = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
 
-        return authResult is null ? BadRequest("Invalid email/password"): Ok(authResult);
+        return authResult.IsSuccess? Ok(authResult.Value) : BadRequest(authResult.Error);
     }
 
     [HttpPost("refresh")]

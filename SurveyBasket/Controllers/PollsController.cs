@@ -25,7 +25,9 @@ public class PollsController(IPollService pollService) : ControllerBase
     {
         var result = await _pollService.GetAsync(id, cancellationToken);
 
-        return result.IsSuccess? Ok(result.Value) : NotFound(result.Error);
+        return result.IsSuccess
+            ? Ok(result.Value) 
+            : Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code,detail:result.Error.Description);
 
     }
 

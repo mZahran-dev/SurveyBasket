@@ -13,7 +13,12 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         var authResult = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
 
-        return authResult.IsSuccess? Ok(authResult.Value) : BadRequest(authResult.Error);
+        //return authResult.IsSuccess? Ok(authResult.Value) : BadRequest(authResult.Error);
+
+        return authResult.Match(
+                Ok,
+                error => Problem(statusCode: StatusCodes.Status400BadRequest, title: error.Code, detail: error.Description)
+        );
     }
 
     [HttpPost("refresh")]

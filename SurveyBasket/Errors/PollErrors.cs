@@ -2,6 +2,6 @@
 
 public static class PollErrors
 {
-    public static readonly Error PollNotFound = new Error("poll.NotFound", "no Poll was Found for the given ID"); 
+    public static readonly Error PollNotFound = new Error("poll.NotFound", "no Poll was Found for the given ID",StatusCodes.Status404NotFound); 
 }
 

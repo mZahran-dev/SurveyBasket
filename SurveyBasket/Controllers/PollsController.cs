@@ -27,16 +27,18 @@ public class PollsController(IPollService pollService) : ControllerBase
 
         return result.IsSuccess
             ? Ok(result.Value)
-            : result.ToProblem(StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
 
     [HttpPost("")]
     public async Task<IActionResult> Add([FromBody] PollRequest request,
         CancellationToken cancellationToken)
     {
-        var newPoll = await _pollService.AddAsync(request, cancellationToken);
-
-        return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
+        var result = await _pollService.AddAsync(request, cancellationToken);
+         
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(Get), new { id = result.Value.Id },result) 
+            : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -44,21 +46,28 @@ public class PollsController(IPollService pollService) : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _pollService.UpdateAsync(id, request, cancellationToken);
+        if (result.IsSuccess)
+            return NoContent();
 
-        return result.IsSuccess? NoContent() : result.ToProblem(StatusCodes.Status404NotFound);
+        return result.Error.Equals(PollErrors.DublicatedPoll)
+                ? result.ToProblem()   // needs to be handled
+                : result.ToProblem();
+
+
+        //return result.IsSuccess? NoContent() : result.ToProblem();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _pollService.DeleteAsync(id, cancellationToken);
-        return result.IsSuccess? NoContent() : result.ToProblem(StatusCodes.Status404NotFound);
+        return result.IsSuccess? NoContent() : result.ToProblem();
     }
 
     [HttpPut("{id}/togglePublish")]
     public async Task<IActionResult> TogglePublish([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _pollService.TogglePublishStatusAsync(id, cancellationToken);
-        return result.IsSuccess? NoContent() : result.ToProblem(StatusCodes.Status404NotFound);
+        return result.IsSuccess? NoContent() : result.ToProblem();
     }
 }

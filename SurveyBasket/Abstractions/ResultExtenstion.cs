@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace SurveyBasket.Abstractions;
+﻿namespace SurveyBasket.Abstractions;
 
 public static class ResultExtenstion
 {

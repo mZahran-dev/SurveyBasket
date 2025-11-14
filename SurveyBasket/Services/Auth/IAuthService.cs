@@ -1,7 +1,4 @@
-﻿using OneOf;
-using SurveyBasket.Abstractions;
-
-namespace SurveyBasket.Services;
+﻿namespace SurveyBasket.Services.Auth;
 
 public interface IAuthService
 {

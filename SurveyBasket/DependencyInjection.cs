@@ -2,9 +2,10 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using SurveyBasket.Authentication;
-using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
+using SurveyBasket.Authentication;
+using SurveyBasket.Services.Auth;
+using System.Reflection;
 using System.Text;
 
 namespace SurveyBasket;
@@ -42,6 +43,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
+        //services.AddScoped<IQuestionService, QuestionService>();
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
@@ -58,7 +60,7 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddMapsterConfig(this IServiceCollection services) 
+    private static IServiceCollection AddMapsterConfig(this IServiceCollection services)
     {
         var mappingConfig = TypeAdapterConfig.GlobalSettings;
         mappingConfig.Scan(Assembly.GetExecutingAssembly());

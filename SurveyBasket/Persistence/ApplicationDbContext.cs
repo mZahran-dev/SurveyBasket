@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace SurveyBasket.Persistence;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : 
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) :
     IdentityDbContext<ApplicationUser>(options)
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
@@ -41,7 +41,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             {
                 entityEntry.Property(x => x.CreatedById).CurrentValue = currentUserId;
             }
-            else if(entityEntry.State == EntityState.Modified)
+            else if (entityEntry.State == EntityState.Modified)
             {
                 entityEntry.Property(x => x.UpdatedById).CurrentValue = currentUserId;
                 entityEntry.Property(x => x.UpdatedOn).CurrentValue = DateTime.UtcNow;

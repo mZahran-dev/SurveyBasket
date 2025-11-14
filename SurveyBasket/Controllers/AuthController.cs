@@ -1,4 +1,4 @@
-﻿using SurveyBasket.Abstractions;
+﻿using SurveyBasket.Services.Auth;
 
 namespace SurveyBasket.Controllers;
 
@@ -12,8 +12,8 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var authResult = await _authService.GetTokenAsync(request.Email, request.Password, cancellationToken);
-        return authResult.IsSuccess 
-            ? Ok(authResult.Value) 
+        return authResult.IsSuccess
+            ? Ok(authResult.Value)
             : authResult.ToProblem();
 
         //return authResult.Match(
@@ -35,6 +35,6 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         var result = await _authService.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
 
-        return result.IsSuccess? Ok() : result.ToProblem();
+        return result.IsSuccess ? Ok() : result.ToProblem();
     }
 }

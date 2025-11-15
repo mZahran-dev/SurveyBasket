@@ -1,8 +1,4 @@
-﻿using Azure.Core;
-
-namespace SurveyBasket.Services;
-
-public class PollService(ApplicationDbContext context) : IPollService
+﻿public class PollService(ApplicationDbContext context) : IPollService
 {
     private readonly ApplicationDbContext _context = context;
 
@@ -21,15 +17,15 @@ public class PollService(ApplicationDbContext context) : IPollService
     public async Task<Result<PollResponse>> AddAsync(PollRequest request, CancellationToken cancellationToken = default)
     {
         var isExsist = await _context.Polls.AnyAsync(x => x.Title == request.Title, cancellationToken: cancellationToken);
-        if(isExsist)
+        if (isExsist)
             return Result.Failure<PollResponse>(PollErrors.DublicatedPoll);
 
         var Poll = request.Adapt<Poll>();
         await _context.AddAsync(Poll, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(Poll.Adapt<PollResponse>()); 
-    } 
+        return Result.Success(Poll.Adapt<PollResponse>());
+    }
 
     public async Task<Result> UpdateAsync(int id, PollRequest request, CancellationToken cancellationToken = default)
     {
@@ -38,7 +34,7 @@ public class PollService(ApplicationDbContext context) : IPollService
             return Result.Failure<PollResponse>(PollErrors.DublicatedPoll);
 
         var currentPoll = await _context.Polls.FindAsync(id, cancellationToken);
-     
+
         if (currentPoll is null)
             return Result.Failure(PollErrors.PollNotFound);
 

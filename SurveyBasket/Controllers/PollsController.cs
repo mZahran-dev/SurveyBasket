@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.Abstractions;
 
 namespace SurveyBasket.Controllers;
 
@@ -35,9 +34,9 @@ public class PollsController(IPollService pollService) : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _pollService.AddAsync(request, cancellationToken);
-         
+
         return result.IsSuccess
-            ? CreatedAtAction(nameof(Get), new { id = result.Value.Id },result) 
+            ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result)
             : result.ToProblem();
     }
 
@@ -61,13 +60,13 @@ public class PollsController(IPollService pollService) : ControllerBase
     public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _pollService.DeleteAsync(id, cancellationToken);
-        return result.IsSuccess? NoContent() : result.ToProblem();
+        return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 
     [HttpPut("{id}/togglePublish")]
     public async Task<IActionResult> TogglePublish([FromRoute] int id, CancellationToken cancellationToken)
     {
         var result = await _pollService.TogglePublishStatusAsync(id, cancellationToken);
-        return result.IsSuccess? NoContent() : result.ToProblem();
+        return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 }

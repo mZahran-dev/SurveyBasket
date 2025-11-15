@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OneOf;
-using SurveyBasket.Abstractions;
 using SurveyBasket.Authentication;
-using SurveyBasket.Errors;
 using System.Security.Cryptography;
 
-namespace SurveyBasket.Services;
+namespace SurveyBasket.Services.Auth;
 
 public class AuthService(UserManager<ApplicationUser> userManager, IJwtProvider jwtProvider) : IAuthService
 {
@@ -80,12 +77,12 @@ public class AuthService(UserManager<ApplicationUser> userManager, IJwtProvider 
 
         var user = await _userManager.FindByIdAsync(userId);
 
-        if(user is null )
+        if (user is null)
             return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
 
         var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
 
-        if (userRefreshToken is null) 
+        if (userRefreshToken is null)
             return Result.Failure<AuthResponse>(UserErrors.InvalidRefreshToken);
 
         userRefreshToken.RevokedOn = DateTime.UtcNow;
@@ -103,7 +100,7 @@ public class AuthService(UserManager<ApplicationUser> userManager, IJwtProvider 
         await _userManager.UpdateAsync(user);
 
         var authResult = new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, newToken, expiresIn, newRefreshToken, refreshTokenExpiration);
-   
+
         return Result.Success(authResult);
     }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Reflection;
 using System.Security.Claims;
 
@@ -26,6 +27,23 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             fk.DeleteBehavior = DeleteBehavior.Restrict;
 
 
+
+        var hasher = new PasswordHasher<ApplicationUser>();
+
+        var adminUser = new ApplicationUser
+        {
+            Id = "1", // fixed ID so seeding is stable
+            UserName = "admin@example.com",
+            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+            Email = "admin@example.com",
+            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+            EmailConfirmed = true,
+            SecurityStamp = Guid.NewGuid().ToString("D")
+        };
+
+        adminUser.PasswordHash = hasher.HashPassword(adminUser, "Admin123!");
+
+        modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
         base.OnModelCreating(modelBuilder);
     }
 

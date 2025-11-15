@@ -4,7 +4,7 @@ namespace SurveyBasket.Contracts.Questions;
 
 public record QuestionResponse
 (
-    string Content,
     int Id,
+    string Content,
     IEnumerable<AnswerResponse> Answers
 );

@@ -2,6 +2,6 @@
 
 public record AnswerResponse
 (
-    string Content,
-    int Id
+    int Id,
+    string Content
 );

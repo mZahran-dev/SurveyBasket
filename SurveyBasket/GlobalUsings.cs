@@ -10,3 +10,4 @@ global using SurveyBasket.Contracts.Polls;
 global using SurveyBasket.Errors;
 global using SurveyBasket.Persistence;
 global using SurveyBasket.Entities;
+global using Microsoft.AspNetCore.Authorization;

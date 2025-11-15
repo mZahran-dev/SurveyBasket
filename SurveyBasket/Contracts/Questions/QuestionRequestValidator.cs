@@ -7,13 +7,17 @@ public class QuestionRequestValidator : AbstractValidator<QuestionRequest>
         RuleFor(x => x.Content).NotEmpty().Length(3, 1000);
         RuleFor(x => x.Answers).NotNull();
 
+        RuleFor(x => x.Answers).NotNull();
+
         RuleFor(x => x.Answers)
             .Must(x => x.Count() > 1)
-            .WithMessage("At least two answers are required.");
+            .WithMessage("At least two answers are required.")
+            .When(x => x.Answers != null);
 
         RuleFor(x => x.Answers)
             .Must(x => x.Distinct().Count() == x.Count)
-            .WithMessage("You cannot add duplicated answers for the same question");
+            .WithMessage("You cannot add duplicated answers for the same question")
+            .When(x => x.Answers != null);  
 
 
 

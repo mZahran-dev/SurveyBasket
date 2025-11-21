@@ -42,15 +42,8 @@ public class PollsController(IPollService pollService) : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _pollService.UpdateAsync(id, request, cancellationToken);
-        if (result.IsSuccess)
-            return NoContent();
+        return result.IsSuccess? NoContent() : result.ToProblem();
 
-        return result.Error.Equals(PollErrors.DublicatedPoll)
-                ? result.ToProblem()   // needs to be handled
-                : result.ToProblem();
-
-
-        //return result.IsSuccess? NoContent() : result.ToProblem();
     }
 
     [HttpDelete("{id}")]

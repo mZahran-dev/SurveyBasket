@@ -17,24 +17,14 @@ public class VotesController(IQuestionService questionService, IVoteService vote
         var userId = User.GetUserId();
         var result = await _questionService.GetAvailableAsync(pollId, userId!, cancellationToken);
 
-        if(result.IsSuccess)
-            return Ok(result.Value);
-
-        return result.Error.Equals(VoteErrors.DublicatedVote)
-            ? result.ToProblem()
-            : result.ToProblem();
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
 
     [HttpPost("")]
     public async Task<IActionResult> Vote([FromRoute] int pollId, [FromBody] VoteRequest request, CancellationToken cancellationToken)
     {
         var result = await _voteService.AddAsync(pollId, User.GetUserId()!, request, cancellationToken);
-        
-        if (result.IsSuccess)
-            return Created();
 
-        return result.Error.Equals(VoteErrors.InvalidQuestion)
-           ? result.ToProblem()
-           : result.ToProblem();
+        return result.IsSuccess? Created(): result.ToProblem();
     }
 }

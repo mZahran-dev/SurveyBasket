@@ -24,7 +24,7 @@ public class QuestionController(IQuestionService questionService) : ControllerBa
     {
         var result = await _questionService.GetAsync(PollId,Id, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+        return result.IsSuccess ? Ok(result.Value): result.ToProblem();
     }
 
     [HttpPost("")]
@@ -32,12 +32,9 @@ public class QuestionController(IQuestionService questionService) : ControllerBa
     {
         var result = await _questionService.AddAsync(PollId, request, cancellationToken);
 
-        if (result.IsSuccess)
-            return CreatedAtAction(nameof(Get), new {  PollId, result.Value.Id }, result.Value);
-
-        return result.Error.Equals(QuestionErrors.QuestionDublicatedContent)
-                ? result.ToProblem()   // needs to be handled
-                : result.ToProblem();
+        return result.IsSuccess
+               ? CreatedAtAction(nameof(Get), new {  PollId, result.Value.Id }, result.Value)
+               : result.ToProblem();
     }
 
     [HttpPut("{id}")]
@@ -45,12 +42,7 @@ public class QuestionController(IQuestionService questionService) : ControllerBa
     {
         var result = await _questionService.UpdateAsync(pollId, id, request, cancellationToken);
 
-        if (result.IsSuccess)
-            return NoContent();
-
-        return result.Error.Equals(QuestionErrors.QuestionDublicatedContent)
-                ? result.ToProblem() // need to be handled
-                : result.ToProblem();
+        return result.IsSuccess? NoContent(): result.ToProblem();
     }
 
     [HttpPut("{id}/toggleStatus")]

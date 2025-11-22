@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using SurveyBasket.Contracts.Answers;
+﻿using SurveyBasket.Contracts.Answers;
 using SurveyBasket.Contracts.Questions;
 
 namespace SurveyBasket.Services.Questions;
@@ -46,6 +45,32 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
             return Result.Failure<QuestionResponse>(QuestionErrors.QuestionNotFound);
 
         return Result.Success(question);
+    }
+
+    public async Task<Result<IEnumerable<QuestionResponse>>> GetAvailableAsync(int pollId, string userId, CancellationToken cancellationToken = default)
+    {
+        var hasVote = await _context.Votes.AnyAsync(x => x.PollId == pollId && x.UserId == userId, cancellationToken);
+        if (hasVote)
+            return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DublicatedVote);
+
+        var PollIsExists = await _context.Polls
+                .AnyAsync(p => p.Id == pollId && p.IsPublished 
+                && p.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow)
+                && p.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
+
+        if (!PollIsExists)
+            return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
+
+
+        var question = await _context.Questions
+            .Where(Q => Q.PollId == pollId && Q.IsActive)
+            .Include(x => x.Answers).Select(q => new QuestionResponse(
+                 q.Id,
+                 q.Content,
+                 q.Answers.Where(a => a.IsActive).Select(a => new AnswerResponse(a.Id, a.Content))
+            )).AsNoTracking().ToListAsync(cancellationToken);
+
+        return Result.Success<IEnumerable<QuestionResponse>>(question);
     }
     public async Task<Result<QuestionResponse>> AddAsync([FromRoute] int pollId, [FromBody] QuestionRequest Request, CancellationToken cancellationToken)
     {
@@ -112,8 +137,6 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
 
         return Result.Success();
     }
-
-
     public async Task<Result> ToggleStatusAsync(int id, CancellationToken cancellationToken = default)
     {
         var question = await _context.Questions.SingleOrDefaultAsync(x => x.PollId == x.Id, cancellationToken: cancellationToken); ;

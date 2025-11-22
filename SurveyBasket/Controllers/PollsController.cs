@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace SurveyBasket.Controllers;
+﻿namespace SurveyBasket.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -11,13 +9,12 @@ public class PollsController(IPollService pollService) : ControllerBase
 
     [HttpGet("")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
-    {
-        var polls = await _pollService.GetAllAsync(cancellationToken);
+        => Ok(await _pollService.GetAllAsync(cancellationToken));
 
-        var response = polls.Adapt<IEnumerable<PollResponse>>();
 
-        return Ok(response);
-    }
+    [HttpGet("current")]
+    public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
+        => Ok(await _pollService.GetCurrentAsync(cancellationToken));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get([FromRoute] int id, CancellationToken cancellationToken)
@@ -45,15 +42,8 @@ public class PollsController(IPollService pollService) : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _pollService.UpdateAsync(id, request, cancellationToken);
-        if (result.IsSuccess)
-            return NoContent();
+        return result.IsSuccess? NoContent() : result.ToProblem();
 
-        return result.Error.Equals(PollErrors.DublicatedPoll)
-                ? result.ToProblem()   // needs to be handled
-                : result.ToProblem();
-
-
-        //return result.IsSuccess? NoContent() : result.ToProblem();
     }
 
     [HttpDelete("{id}")]

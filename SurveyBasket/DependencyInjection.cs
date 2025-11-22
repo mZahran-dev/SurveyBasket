@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Authentication;
 using SurveyBasket.Services.Auth;
 using SurveyBasket.Services.Questions;
+using SurveyBasket.Services.Votes;
 using System.Reflection;
 using System.Text;
 
@@ -45,6 +46,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPollService, PollService>();
         services.AddScoped<IQuestionService, QuestionService>();
+        services.AddScoped<IVoteService, VoteService>();
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();

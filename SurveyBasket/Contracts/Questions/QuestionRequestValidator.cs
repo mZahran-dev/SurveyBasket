@@ -17,7 +17,7 @@ public class QuestionRequestValidator : AbstractValidator<QuestionRequest>
         RuleFor(x => x.Answers)
             .Must(x => x.Distinct().Count() == x.Count)
             .WithMessage("You cannot add duplicated answers for the same question")
-            .When(x => x.Answers != null);  
+            .When(x => x.Answers != null);
 
 
 

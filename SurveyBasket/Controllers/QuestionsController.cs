@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Abstractions;
-using SurveyBasket.Contracts.Questions;
+﻿using SurveyBasket.Contracts.Questions;
 using SurveyBasket.Services.Questions;
 
 namespace SurveyBasket.Controllers;
@@ -7,33 +6,33 @@ namespace SurveyBasket.Controllers;
 [Route("api/polls/{PollId}/[controller]")]
 [ApiController]
 [Authorize]
-public class QuestionController(IQuestionService questionService) : ControllerBase
+public class QuestionsController(IQuestionService questionService) : ControllerBase
 {
     private readonly IQuestionService _questionService = questionService;
 
     [HttpGet("")]
-    public async Task<IActionResult> GetAll([FromRoute] int PollId,CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromRoute] int PollId, CancellationToken cancellationToken)
     {
         var result = await _questionService.GetAllAsync(PollId, cancellationToken);
 
-        return result.IsSuccess? Ok(result.Value) : result.ToProblem();
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
 
     [HttpGet("{Id}")]
     public async Task<IActionResult> Get([FromRoute] int PollId, [FromRoute] int Id, CancellationToken cancellationToken)
     {
-        var result = await _questionService.GetAsync(PollId,Id, cancellationToken);
+        var result = await _questionService.GetAsync(PollId, Id, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value): result.ToProblem();
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Add([FromRoute] int PollId,[FromBody] QuestionRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Add([FromRoute] int PollId, [FromBody] QuestionRequest request, CancellationToken cancellationToken)
     {
         var result = await _questionService.AddAsync(PollId, request, cancellationToken);
 
         return result.IsSuccess
-               ? CreatedAtAction(nameof(Get), new {  PollId, result.Value.Id }, result.Value)
+               ? CreatedAtAction(nameof(Get), new { PollId, result.Value.Id }, result.Value)
                : result.ToProblem();
     }
 
@@ -42,7 +41,7 @@ public class QuestionController(IQuestionService questionService) : ControllerBa
     {
         var result = await _questionService.UpdateAsync(pollId, id, request, cancellationToken);
 
-        return result.IsSuccess? NoContent(): result.ToProblem();
+        return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 
     [HttpPut("{id}/toggleStatus")]

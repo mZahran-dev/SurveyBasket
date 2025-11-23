@@ -7,10 +7,10 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<Result<IEnumerable<QuestionResponse>>> GetAllAsync(int pollId,CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<QuestionResponse>>> GetAllAsync(int pollId, CancellationToken cancellationToken = default)
     {
         var pollIsExists = await _context.Polls.AnyAsync(p => p.Id == pollId, cancellationToken);
-        
+
         if (!pollIsExists)
             return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
 
@@ -41,7 +41,7 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
             .AsNoTracking()
             .SingleOrDefaultAsync(cancellationToken);
 
-        if(question is null)
+        if (question is null)
             return Result.Failure<QuestionResponse>(QuestionErrors.QuestionNotFound);
 
         return Result.Success(question);
@@ -54,7 +54,7 @@ public class QuestionService(ApplicationDbContext context) : IQuestionService
             return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DublicatedVote);
 
         var PollIsExists = await _context.Polls
-                .AnyAsync(p => p.Id == pollId && p.IsPublished 
+                .AnyAsync(p => p.Id == pollId && p.IsPublished
                 && p.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow)
                 && p.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
 

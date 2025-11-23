@@ -42,7 +42,7 @@ public class PollsController(IPollService pollService) : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _pollService.UpdateAsync(id, request, cancellationToken);
-        return result.IsSuccess? NoContent() : result.ToProblem();
+        return result.IsSuccess ? NoContent() : result.ToProblem();
 
     }
 

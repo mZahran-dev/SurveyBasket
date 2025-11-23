@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SurveyBasket.Contracts.Questions;
-using SurveyBasket.Contracts.Votes;
+﻿using SurveyBasket.Contracts.Votes;
 
 namespace SurveyBasket.Services.Votes;
 
@@ -11,7 +9,7 @@ public class VoteService(ApplicationDbContext context) : IVoteService
     public async Task<Result> AddAsync(int pollId, string userId, VoteRequest request, CancellationToken cancellationToken = default)
     {
         var hasVote = await _context.Votes.AnyAsync(x => x.PollId == pollId && x.UserId == userId, cancellationToken);
-        
+
         if (hasVote)
             return Result.Failure(VoteErrors.DublicatedVote);
 

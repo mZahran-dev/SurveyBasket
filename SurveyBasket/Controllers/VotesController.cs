@@ -25,6 +25,6 @@ public class VotesController(IQuestionService questionService, IVoteService vote
     {
         var result = await _voteService.AddAsync(pollId, User.GetUserId()!, request, cancellationToken);
 
-        return result.IsSuccess? Created(): result.ToProblem();
+        return result.IsSuccess ? Created() : result.ToProblem();
     }
 }

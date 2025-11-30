@@ -1,4 +1,4 @@
-﻿using SurveyBasket.Services;
+﻿using SurveyBasket.Services.Results;
 
 namespace SurveyBasket.Controllers;
 

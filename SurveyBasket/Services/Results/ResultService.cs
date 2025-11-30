@@ -1,6 +1,6 @@
 ﻿using SurveyBasket.Contracts.Results;
 
-namespace SurveyBasket.Services;
+namespace SurveyBasket.Services.Results;
 
 
 public class ResultService(ApplicationDbContext context) : IResultService
